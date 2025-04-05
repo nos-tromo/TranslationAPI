@@ -1,0 +1,5 @@
+fastapi>=0.115.12
+langdetect>=1.0.9
+torch>=2.6.0
+transformers>=4.50.3
+uvicorn>=0.34.0
