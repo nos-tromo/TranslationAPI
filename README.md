@@ -6,7 +6,7 @@ cd backend
 uv sync
 uvicorn main:app --reload
 ```
-Access backend endpoint in the browser: `http://127.0.0.1:8000/docs`
+Local browser access (backend): `http://127.0.0.1:8000/docs`
 #### Frontend setup
 ```bash
 npm create vite@latest frontend -- --template react
@@ -15,9 +15,10 @@ npm install
 npm install axios
 npm run dev
 ```
-Access frontend in the browser: `http://localhost:5173/`
+Local browser access (frontend): `http://localhost:5173/`
 
 #### Docker setup
 ```
 docker compose up --build
 ```
+Local browser access: `http://localhost:8080/`
