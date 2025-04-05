@@ -21,4 +21,4 @@ Local browser access (frontend): `http://localhost:5173/`
 ```
 docker compose up --build
 ```
-Local browser access: `http://localhost:8080/`
+Local browser access (app): `http://localhost:8080/`
