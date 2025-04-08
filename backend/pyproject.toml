@@ -9,6 +9,8 @@ dependencies = [
     "langdetect>=1.0.9",
     "nltk>=3.9.1",
     "torch>=2.6.0",
+    "torchaudio>=2.6.0",
+    "torchvision>=0.21.0",
     "transformers>=4.50.3",
     "uvicorn>=0.34.0",
 ]
