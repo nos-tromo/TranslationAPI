@@ -28,7 +28,6 @@ with open(language_path, "r", encoding="utf-8") as f:
 model_name = "facebook/nllb-200-3.3B"
 device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 torch_dtype = torch.float16 if torch.cuda.is_available() or torch.backends.mps.is_available() else torch.float32
-
 tokenizer = AutoTokenizer.from_pretrained(model_name, local_files_only=True)
 model = AutoModelForSeq2SeqLM.from_pretrained(model_name, torch_dtype=torch_dtype, local_files_only=True).to(device)
 
