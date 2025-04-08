@@ -4,7 +4,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     volumes:
-      - ~/.cache/huggingface:/root/.cache/huggingface
+      - ${HF_CACHE:-${USERPROFILE:-$HOME}/.cache/huggingface}:/root/.cache/huggingface
     ports:
       - "8000:8000"
     environment:
