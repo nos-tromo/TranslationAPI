@@ -1,14 +1,17 @@
-FROM python:3.11-slim
+FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
-    git \
+    python3.11 python3.11-dev python3-pip git \
  && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 \
+ && update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
 
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt .
+RUN pip install --upgrade pip \
+ && pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
