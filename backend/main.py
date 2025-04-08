@@ -4,6 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from langdetect import detect, LangDetectException
+import nltk
 from pydantic import BaseModel
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
@@ -39,6 +40,7 @@ iso_to_nllb = {
     "es": "spa_Latn",
     "ar": "arb_Arab",
     "ru": "rus_Cyrl",
+    "tr": "tur_Latn"
 }
 
 
@@ -50,17 +52,21 @@ class TranslationRequest(BaseModel):
 
 def run_translation(text: str, source_lang: str, target_lang: str) -> str:
     tokenizer.src_lang = source_lang
-    inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True).to(device)
-    generated_tokens = model.generate(
-        **inputs,
-        forced_bos_token_id=tokenizer.convert_tokens_to_ids(target_lang),
-        max_length=200
-    )
-    return tokenizer.decode(generated_tokens[0], skip_special_tokens=True)
+    translated_text = []
+    sentences = nltk.sent_tokenize(text)
+    for sentence in sentences:
+        inputs = tokenizer(sentence, return_tensors="pt", padding=True, truncation=True).to(device)
+        generated_tokens = model.generate(
+            **inputs,
+            forced_bos_token_id=tokenizer.convert_tokens_to_ids(target_lang),
+            max_length=400
+        )
+        translated_text.append(tokenizer.decode(generated_tokens[0], skip_special_tokens=True))
+    return " ".join(translated_text)
 
 
 @app.post("/translate")
-def translate(req: TranslationRequest):
+def translate(req: TranslationRequest) -> dict[str, str]:
     source_lang = req.source_lang
     if source_lang == "auto":
         try:
