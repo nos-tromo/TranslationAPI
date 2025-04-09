@@ -2,7 +2,7 @@ fastapi
 langdetect
 nltk
 torch
-torchvision
 torchaudio
+torchvision
 transformers
 uvicorn
