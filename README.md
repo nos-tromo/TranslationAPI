@@ -1,4 +1,4 @@
-# NLLB TranslationAPI
+# TranslationAPI
 
 #### Backend setup
 ```bash
@@ -6,7 +6,7 @@ cd backend
 uv sync
 uvicorn main:app --reload
 ```
-Local browser access (backend): `http://127.0.0.1:8000/docs`
+Access backend: `http://127.0.0.1:8000/docs`
 #### Frontend setup
 ```bash
 npm create vite@latest frontend -- --template react
@@ -15,10 +15,14 @@ npm install
 npm install axios
 npm run dev
 ```
-Local browser access (frontend): `http://localhost:5173/`
+Access frontend: `http://localhost:5173/`
 
 #### Docker setup
+Select whether to use the CPU or GPU (requires a CUDA compatible GPU and the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) set up):
 ```
-docker compose up --build
+docker compose --profile cpu up
+docker compose --profile gpu up
 ```
-Local browser access (app): `http://localhost:8080/`
+Launch app: `http://localhost:8080/`
+
+**Important note**: Make sure to [download](https://huggingface.co/facebook/nllb-200-3.3B) the translation model to its default location. 
