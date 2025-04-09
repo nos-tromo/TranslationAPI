@@ -2,7 +2,7 @@ from langdetect import detect, LangDetectException
 
 import nltk
 import torch
-from transformers import PreTrainedModel, PreTrainedTokenizer
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 
 class Translator:
@@ -19,16 +19,12 @@ class Translator:
             "tr": "tur_Latn"
         }
 
-    @staticmethod
-    def _load_model(
-            model_name: str = "facebook/nllb-200-3.3B",
-            local_only: bool = True
-    ) -> tuple[PreTrainedTokenizer, PreTrainedModel, torch.device]:
-
-        device = torch.device(
-            "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
-        )
-        torch_dtype = torch.float16 if device.type in ["cuda", "mps"] else torch.float32
+    def _load_model(self, model_name: str = "facebook/nllb-200-3.3B", local_only: bool = True) -> tuple:
+        try:
+            device = torch.device(
+                "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+            )
+            torch_dtype = torch.float16 if device.type in ["cuda", "mps"] else torch.float32
 
         try:
             # Attempt to load the model and tokenizer from local files
@@ -47,6 +43,17 @@ class Translator:
                 model_name,
                 torch_dtype=torch_dtype
             ).to(device)
+                tokenizer = AutoTokenizer.from_pretrained(model_name, local_files_only=True)
+                model = AutoModelForSeq2SeqLM.from_pretrained(
+                    model_name,
+                    torch_dtype=torch_dtype,
+                    local_files_only=local_only
+                ).to(device)
+                tokenizer = AutoTokenizer.from_pretrained(model_name)
+                model = AutoModelForSeq2SeqLM.from_pretrained(
+                    model_name,
+                    torch_dtype=torch_dtype
+                ).to(device)
 
         return tokenizer, model, device
 
