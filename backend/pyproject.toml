@@ -14,4 +14,3 @@ dependencies = [
     "transformers>=4.50.3",
     "uvicorn>=0.34.0",
 ]
-
