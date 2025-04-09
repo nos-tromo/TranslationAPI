@@ -28,7 +28,11 @@ from translator import Translator
 
 # === FastAPI Setup ===
 
-app = FastAPI(title="NLLB-200 Translation API")
+app = FastAPI(
+    title="NLLB-200 Translation API",
+    description="Translate text using Meta's NLLB-200 model via Hugging Face Transformers.",
+    version="1.0.0"
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -71,7 +75,13 @@ def _load_language_codes(filename: str = "language_codes.json") -> dict[str, str
         logging.error(f"Error loading language code file: {e}")
 
 
-@app.post("/translate")
+@app.post(
+    "/translate",
+    summary="Translate text",
+    description="Translates input text from a source language to a target language using the NLLB-200 model. "
+                "If `source_lang` is set to `'auto'`, the system will auto-detect the source language.",
+    tags=["Translation"]
+)
 def translate(req: TranslationRequest) -> dict[str, str] | None:
     """
     POST endpoint for translating text between languages.
@@ -93,7 +103,13 @@ def translate(req: TranslationRequest) -> dict[str, str] | None:
         raise HTTPException(status_code=500, detail="Translation failed.")
 
 
-@app.get("/languages")
+@app.get(
+    "/languages",
+    summary="List supported languages",
+    description="Returns a list of supported NLLB-200 language codes with human-readable names, "
+                "based on the included `language_codes.json` file.",
+    tags=["Metadata"]
+)
 def get_languages() -> list[dict[str, str]] | None:
     """
     GET endpoint for retrieving available translation languages.
