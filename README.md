@@ -4,7 +4,7 @@
 ```bash
 cd backend
 uv sync
-uvicorn main:app --reload
+uv run uvicorn main:app --reload
 ```
 Access backend: `http://127.0.0.1:8000/docs`
 #### Frontend setup
