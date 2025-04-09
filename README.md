@@ -24,5 +24,3 @@ docker compose --profile cpu up
 docker compose --profile gpu up
 ```
 Launch app: `http://localhost:8080/`
-
-**Important note**: Make sure to [download](https://huggingface.co/facebook/nllb-200-3.3B) the translation model to its default location. 
