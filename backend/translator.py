@@ -2,7 +2,7 @@ from langdetect import detect, LangDetectException
 
 import nltk
 import torch
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import PreTrainedModel, PreTrainedTokenizer
 
 
 class Translator:
