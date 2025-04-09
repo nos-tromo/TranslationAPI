@@ -74,27 +74,12 @@ class Translator:
 
     def translate(self, text: str, source_lang: str, target_lang: str) -> str:
         if source_lang == "auto":
-            source_lang = self.auto_detect(text)
+            source_lang = self._detect_language(text)
 
         if target_lang == "eng_Latn":
-            return self._run_translation(text, source_lang, target_lang)
+            return self._model_inference(text, source_lang, target_lang)
         else:
             # Step 1: to English
-            intermediate = self._run_translation(text, source_lang, "eng_Latn")
+            intermediate = self._model_inference(text, source_lang, "eng_Latn")
             # Step 2: to target
-            return self._run_translation(intermediate, "eng_Latn", target_lang)
-
-    def _run_translation(self, text: str, source_lang: str, target_lang: str) -> str:
-        self.tokenizer.src_lang = source_lang
-        translated_text = []
-
-        for sentence in nltk.sent_tokenize(text):
-            inputs = self.tokenizer(sentence, return_tensors="pt", padding=True, truncation=True).to(self.device)
-            generated_tokens = self.model.generate(
-                **inputs,
-                forced_bos_token_id=self.tokenizer.convert_tokens_to_ids(target_lang),
-                max_length=400
-            )
-            translated_text.append(self.tokenizer.decode(generated_tokens[0], skip_special_tokens=True))
-
-        return " ".join(translated_text)
+            return self._model_inference(intermediate, "eng_Latn", target_lang)
