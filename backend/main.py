@@ -21,7 +21,7 @@ logging.basicConfig(
 import json
 from pydantic import BaseModel
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from translator import Translator
@@ -90,6 +90,7 @@ def translate(req: TranslationRequest) -> dict[str, str] | None:
         return {"translation": result}
     except Exception as e:
         logging.error(f"Error on /translate endpoint: {e}")
+        raise HTTPException(status_code=500, detail="Translation failed.")
 
 
 @app.get("/languages")
@@ -105,3 +106,4 @@ def get_languages() -> list[dict[str, str]] | None:
         return [{"code": code, "name": LANGUAGE_NAMES.get(code, code)} for code in LANGUAGE_NAMES]
     except Exception as e:
         logging.error(f"Error on /languages endpoint: {e}")
+        raise HTTPException(status_code=500, detail="Failed to load language list.")
