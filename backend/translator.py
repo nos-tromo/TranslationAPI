@@ -6,18 +6,8 @@ from transformers import PreTrainedModel, PreTrainedTokenizer
 
 
 class Translator:
-    def __init__(self, model_name: str = "facebook/nllb-200-3.3B", local_only: bool = True):
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
-        )
-        self.torch_dtype = torch.float16 if self.device.type in ["cuda", "mps"] else torch.float32
-
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, local_files_only=local_only)
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(
-            model_name,
-            torch_dtype=self.torch_dtype,
-            local_files_only=local_only
-        ).to(self.device)
+    def __init__(self):
+        self.tokenizer, self.model, self.device = self._load_model()
 
         self.iso_to_nllb = {
             "en": "eng_Latn",
@@ -29,7 +19,38 @@ class Translator:
             "tr": "tur_Latn"
         }
 
-    def auto_detect(self, text: str) -> str:
+    @staticmethod
+    def _load_model(
+            model_name: str = "facebook/nllb-200-3.3B",
+            local_only: bool = True
+    ) -> tuple[PreTrainedTokenizer, PreTrainedModel, torch.device]:
+
+        device = torch.device(
+            "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+        )
+        torch_dtype = torch.float16 if device.type in ["cuda", "mps"] else torch.float32
+
+        try:
+            # Attempt to load the model and tokenizer from local files
+            tokenizer = PreTrainedTokenizer.from_pretrained(model_name, local_files_only=True)
+            model = PreTrainedModel.from_pretrained(
+                model_name,
+                torch_dtype=torch_dtype,
+                local_files_only=local_only
+            ).to(device)
+            print("✅ Loaded model from local cache.")
+        except FileNotFoundError:
+            # If files are not found locally, download them from Hugging Face
+            print("⬇️ Model not in local cache — downloading from Hugging Face...")
+            tokenizer = PreTrainedTokenizer.from_pretrained(model_name)
+            model = PreTrainedModel.from_pretrained(
+                model_name,
+                torch_dtype=torch_dtype
+            ).to(device)
+
+        return tokenizer, model, device
+
+    def _detect_language(self, text: str) -> str:
         try:
             iso_lang = detect(text)
             return self.iso_to_nllb.get(iso_lang, "eng_Latn")
