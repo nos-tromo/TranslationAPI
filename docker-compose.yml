@@ -1,0 +1,68 @@
+services:
+  #############################
+  # GPU-based Backend
+  #############################
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ${HF_CACHE:-${USERPROFILE:-$HOME}/.cache/huggingface}:/root/.cache/huggingface
+    ports:
+      - "8000:8000"
+    environment:
+      - UVICORN_CMD=uvicorn main:app --host 0.0.0.0 --port 8000
+      - USE_DEVICE=auto
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    profiles:
+      - gpu
+
+  #############################
+  # CPU-based Backend
+  #############################
+  backend-cpu:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ${HF_CACHE:-${USERPROFILE:-$HOME}/.cache/huggingface}:/root/.cache/huggingface
+    ports:
+      - "8000:8000"
+    environment:
+      - UVICORN_CMD=uvicorn main:app --host 0.0.0.0 --port 8000
+      - USE_DEVICE=cpu
+    profiles:
+      - cpu
+
+  #############################
+  # GPU-based Frontend
+  #############################
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    profiles:
+      - gpu
+
+  #############################
+  # CPU-based Frontend
+  #############################
+  frontend-cpu:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend-cpu
+    profiles:
+      - cpu

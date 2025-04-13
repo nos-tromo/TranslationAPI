@@ -1,0 +1,24 @@
+[project]
+name = "TranslationAPI"
+version = "0.1.0"
+description = "Machine translation with Transformers/FastAPI/React"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "accelerate>=1.6.0",
+    "emoji-country-flag>=2.0.1",
+    "fastapi>=0.115.12",
+    "huggingface-hub>=0.30.1",
+    "ipykernel>=6.29.5",
+    "langcodes>=3.5.0",
+    "langdetect>=1.0.9",
+    "nltk>=3.9.1",
+    "protobuf>=6.30.2",
+    "pycountry>=24.6.1",
+    "sentencepiece>=0.2.0",
+    "torch>=2.6.0",
+    "torchaudio>=2.6.0",
+    "torchvision>=0.21.0",
+    "transformers>=4.50.3",
+    "uvicorn>=0.34.0",
+]

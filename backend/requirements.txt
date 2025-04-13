@@ -1,0 +1,14 @@
+accelerate
+emoji-country-flag
+fastapi
+langcodes
+langdetect
+nltk
+protobuf
+pycountry
+sentencepiece
+torch
+torchaudio
+torchvision
+transformers
+uvicorn
