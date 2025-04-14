@@ -44,12 +44,12 @@ class TranslationRequest(BaseModel):
     Request schema for translation endpoint.
 
     Attributes:
-        target_lang (str): The language code of the target language.
         text (str): Input text to translate.
+        target_lang (str): The language code of the target language.
     """
 
-    target_lang: str
     text: str
+    target_lang: str
 
 
 def _load_language_codes(
