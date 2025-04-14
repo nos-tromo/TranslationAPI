@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ${HF_CACHE:-${USERPROFILE:-$HOME}/.cache/huggingface}:/root/.cache/huggingface
-      - "${APPDATA:-${HOME}}/nltk_data:/root/nltk_data"
+      - ${APPDATA:-${HOME}}/nltk_data:/root/nltk_data
     ports:
       - "8000:8000"
     environment:
@@ -32,7 +32,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ${HF_CACHE:-${USERPROFILE:-$HOME}/.cache/huggingface}:/root/.cache/huggingface
-      - "${APPDATA:-${HOME}}/nltk_data:/root/nltk_data"
+      - ${APPDATA:-${HOME}}/nltk_data:/root/nltk_data
     ports:
       - "8000:8000"
     environment:
