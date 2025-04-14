@@ -7,9 +7,10 @@ uv sync
 uv run uvicorn main:app --reload
 ```
 Access backend: `http://127.0.0.1:8000/docs`
+
 #### Frontend setup
 ```bash
-npm create vite@latest frontend -- --template react
+npx create-vite@latest frontend --template react
 cd frontend
 npm install
 npm install axios
