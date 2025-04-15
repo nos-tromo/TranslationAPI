@@ -10,10 +10,8 @@ Access backend: `http://127.0.0.1:8000/docs`
 
 #### Frontend setup
 ```bash
-npx create-vite@latest frontend --template react
 cd frontend
 npm install
-npm install axios
 npm run dev
 ```
 Access frontend: `http://localhost:5173/`
