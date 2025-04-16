@@ -10,12 +10,16 @@ logs_dir.mkdir(parents=True, exist_ok=True)
 logfile_path = logs_dir / logfile_name
 
 file_handler = logging.FileHandler(logfile_path, encoding="utf-8")
-file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+file_formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 file_handler.setFormatter(file_formatter)
 
 stream_handler = logging.StreamHandler()
 stream_handler.encoding = "utf-8"
-stream_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+stream_formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 stream_handler.setFormatter(stream_formatter)
 
 logging.basicConfig(
