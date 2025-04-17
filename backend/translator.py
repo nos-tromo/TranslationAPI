@@ -89,7 +89,7 @@ class Translator:
             self.logger.error(f"Error converting language to country flag: {e}")
             return ""
 
-    def detect_language(self, text: str) -> str:
+    def detect_language(self, text: str) -> dict[str, str]:
         """
         Detect the language of a text.
 
@@ -100,11 +100,10 @@ class Translator:
             str: Detected language
         """
         try:
-            lang = detect(text)
-            lang_name = pycountry.languages.get(alpha_2=lang).name
-            country_flag = self._get_country_flag(lang_name)
-            lang_country = f"{lang_name} {country_flag}"
-            return lang_country if lang_country else f"Unknown language code: {lang}"
+            self.src_lang = detect(text)
+            src_lang_name = pycountry.languages.get(alpha_2=self.src_lang).name
+            country_flag = self._get_country_flag(src_lang_name)
+            return {"name": src_lang_name, "flag": country_flag}
         except Exception as e:
             self.logger.error(f"Error detecting language: {e}")
 
