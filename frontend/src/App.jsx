@@ -111,7 +111,7 @@ function App() {
                         onClick={() => {
                             setText("");
                             setTranslation("");
-                            setDetectedLang("");
+                            setDetectedLang(null);
                         }}
                         style={{
                             marginTop: "1rem",
