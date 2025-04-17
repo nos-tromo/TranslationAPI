@@ -54,7 +54,7 @@ translator = Translator()
 
 class TranslationRequest(BaseModel):
     """
-    Request schema for translation endpoint.
+    Validation schema for translation request.
 
     Attributes:
         text (str): Input text to translate.
@@ -63,6 +63,30 @@ class TranslationRequest(BaseModel):
 
     text: str
     target_lang: str
+
+
+class DetectedLanguage(BaseModel):
+    """
+    Validation schema for Detected language.
+
+    Args:
+        BaseModel (_type_): _description_
+    """
+
+    name: str
+    flag: str
+
+
+class TranslationResponse(BaseModel):
+    """
+    Validation schema for translation response.
+
+    Args:
+        BaseModel (_type_): _description_
+    """
+
+    translation: str
+    detected_language: DetectedLanguage
 
 
 def _load_language_codes(
@@ -89,10 +113,11 @@ def _load_language_codes(
 @app.post(
     "/translate",
     summary="Translate text",
-    description="Translates input text to a target language using the MADLAD-400 model. ",
+    description="Translates input text to a target language using the MADLAD-400 model.",
     tags=["Translation"],
+    response_model=TranslationResponse,
 )
-def translate(req: TranslationRequest) -> dict[str, str] | None:
+def translate(req: TranslationRequest) -> TranslationResponse:
     """
     POST endpoint for translating text between languages.
 
@@ -103,15 +128,18 @@ def translate(req: TranslationRequest) -> dict[str, str] | None:
         req (TranslationRequest): The translation input parameters.
 
     Returns:
-        dict: A dictionary containing the translated text.
+        TranslationResponse: A dictionary containing the translated text and detected language info.
     """
     try:
         detected_lang = translator.detect_language(req.text)
         result = translator.translate(req.target_lang, req.text)
-        return {
-            "translation": result,
-            "detected_language": detected_lang,
-        }
+        return TranslationResponse(
+            translation=result,
+            detected_language=DetectedLanguage(
+                name=detected_lang.get("name", "Unknown"),
+                flag=detected_lang.get("flag", "🏳️"),
+            ),
+        )
     except Exception as e:
         logging.error(f"Error on /translate endpoint: {e}")
         raise HTTPException(status_code=500, detail="Translation failed.")
