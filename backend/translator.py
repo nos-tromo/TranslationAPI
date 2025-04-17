@@ -108,13 +108,14 @@ class Translator:
         except Exception as e:
             self.logger.error(f"Error detecting language: {e}")
 
-    def _model_inference(self, lang: str, text: str) -> str:
+    def _model_inference(self, lang: str, text: str, verbose: bool = True) -> str:
         """
         Use the model for inference on a given text input.
 
         Args:
             lang (str): Target language code.
             text (str): Text to translate.
+            verbose (bool): Set warning if the model's context window is exceeded
 
         Returns:
             str: The translated text.
@@ -122,11 +123,27 @@ class Translator:
         try:
             prompt = f"<2{lang}> {text}"
             inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
+
+            max_model_len = 256
+            input_ids = inputs.get("input_ids")
+            input_len = input_ids.shape[1]
+            adjusted_max_length = max_model_len
+
+            if input_len >= max_model_len:
+                if verbose:
+                    print(
+                        f"⚠️ Input length ({input_len} tokens) hits or exceeds max context window ({max_model_len}). Output may be truncated or degraded."
+                    )
+                    adjusted_max_length = input_len
+                else:
+                    adjusted_max_length = max_model_len
+
             outputs = self.model.generate(
                 **inputs,
-                max_length=400,
+                max_length=adjusted_max_length,
                 num_beams=4,
                 early_stopping=True,
+                no_repeat_ngram_size=3,
             )
             return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
         except Exception as e:
@@ -154,8 +171,9 @@ class Translator:
                 raise ValueError("No sentences found in the input text.")
             return " ".join(
                 [
-                    self._model_inference(target_lang, sentence)
-                    for sentence in sent_tokenize(text)
+                    self._model_inference(trg_lang, sentence)
+                    for sentence in sentences
+                    if len(sentence) > 0
                 ]
             )
         except Exception as e:
