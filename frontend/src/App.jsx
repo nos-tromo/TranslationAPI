@@ -5,7 +5,7 @@ function App() {
     const [languages, setLanguages] = useState([]);
     const [text, setText] = useState("");
     const [targetLang, setTargetLang] = useState("en");
-    const [detectedLang, setDetectedLang] = useState("");
+    const [detectedLang, setDetectedLang] = useState(null);
     const [translation, setTranslation] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -85,7 +85,10 @@ function App() {
                 >
                     {detectedLang && (
                         <p style={{ marginBottom: "0.5rem" }}>
-                            <strong>Source language:</strong> {detectedLang}
+                            <strong>Source language:</strong>{" "}
+                            <span style={{ fontWeight: "normal" }}>
+                                {detectedLang.name} {detectedLang.flag}
+                            </span>
                         </p>
                     )}
                     <strong>Translation:</strong>
