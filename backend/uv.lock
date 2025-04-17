@@ -75,7 +75,9 @@ dependencies = [
     { name = "langdetect" },
     { name = "nltk" },
     { name = "protobuf" },
+    { name = "pyarabic" },
     { name = "pycountry" },
+    { name = "pydantic" },
     { name = "sentencepiece" },
     { name = "torch" },
     { name = "torchaudio" },
@@ -95,7 +97,9 @@ requires-dist = [
     { name = "langdetect", specifier = ">=1.0.9" },
     { name = "nltk", specifier = ">=3.9.1" },
     { name = "protobuf", specifier = ">=6.30.2" },
+    { name = "pyarabic", specifier = ">=0.6.15" },
     { name = "pycountry", specifier = ">=24.6.1" },
+    { name = "pydantic", specifier = ">=2.11.2" },
     { name = "sentencepiece", specifier = ">=0.2.0" },
     { name = "torch", specifier = ">=2.6.0" },
     { name = "torchaudio", specifier = ">=2.6.0" },
@@ -796,6 +800,17 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/cd/05/0a34433a064256a578f1783a10da6df098ceaa4a57bbeaa96a6c0352786b/pure_eval-0.2.3.tar.gz", hash = "sha256:5f4e983f40564c576c7c8635ae88db5956bb2229d7e9237d03b3c0b0190eaf42", size = 19752 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8e/37/efad0257dc6e593a18957422533ff0f87ede7c9c6ea010a2177d738fb82f/pure_eval-0.2.3-py3-none-any.whl", hash = "sha256:1db8e35b67b3d218d818ae653e27f06c3aa420901fa7b081ca98cbedc874e0d0", size = 11842 },
+]
+
+[[package]]
+name = "pyarabic"
+version = "0.6.15"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "six" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d7/64/0ea5be39e6a6515804cae8c280226d771f42750a08182f9d2e5f3b822694/PyArabic-0.6.15-py3-none-any.whl", hash = "sha256:b9a530277876008f5fbe53249c6953b4513dbbf2ea8f4339694e87c8a75d7edf", size = 126368 },
 ]
 
 [[package]]
