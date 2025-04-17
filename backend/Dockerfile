@@ -3,15 +3,18 @@ FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
-    python3.11 python3.11-dev python3-pip git \
+    python3.11 python3.11-dev git curl ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 \
- && update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1
 
-COPY requirements.txt .
-RUN pip install --upgrade pip \
- && pip install --no-cache-dir -r requirements.txt
+ENV PATH="/root/.local/bin:$PATH"
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+COPY pyproject.toml .
+COPY uv.lock .
+
+RUN uv sync --frozen --no-cache
 
 COPY . .
 
