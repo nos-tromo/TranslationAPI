@@ -7,6 +7,7 @@ import torch
 from langcodes import Language
 from langdetect import detect
 from nltk import sent_tokenize
+from pyarabic.araby import sentence_tokenize
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 
@@ -19,6 +20,7 @@ class Translator:
         """
         self.logger = logging.getLogger(self.__class__.__name__)
         self.tokenizer, self.model, self.device = self._load_model()
+        self.src_lang = None
 
     def _load_model(
         self, model_name: str = "google/madlad400-3b-mt", local_only: bool = True
@@ -130,7 +132,7 @@ class Translator:
         except Exception as e:
             self.logger.error(f"Error during model inference: {e}")
 
-    def translate(self, target_lang: str, text: str) -> str:
+    def translate(self, trg_lang: str, text: str) -> str:
         """
         Translates text sentence-wise between any supported MADLAD languages.
 
@@ -142,6 +144,14 @@ class Translator:
             str: Final translated output.
         """
         try:
+            if not text:
+                raise ValueError("Input text cannot be empty.")
+            if self.src_lang == "ar":
+                sentences = sentence_tokenize(text)
+            else:
+                sentences = sent_tokenize(text)
+            if not sentences:
+                raise ValueError("No sentences found in the input text.")
             return " ".join(
                 [
                     self._model_inference(target_lang, sentence)
