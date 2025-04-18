@@ -163,9 +163,9 @@ class Translator:
             if not text:
                 raise ValueError("Input text cannot be empty.")
             if self.src_lang == "ar":
-                sentences = sentence_tokenize(text)
+                sentences = sentence_tokenize(text)  # Use pyarabic for Arabic
             else:
-                sentences = sent_tokenize(text)
+                sentences = sent_tokenize(text)  # Use nltk for other languages
             if not sentences:
                 raise ValueError("No sentences found in the input text.")
             return " ".join(
