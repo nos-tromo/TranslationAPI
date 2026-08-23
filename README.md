@@ -13,7 +13,7 @@ reaches inference over the shared `inference-net` network.
 
 | Component | File | Description |
 |---|---|---|
-| Backend | `translator/main.py` | FastAPI app — `POST /translate`, `GET /languages` |
+| Backend | `translator/main.py` | FastAPI app — six routes under `/api/v1`: `POST /translate`, `GET /languages`, `/version`, `/config`, `/whoami`, `/health` |
 | Engine | `translator/engine.py` | `Translator` class — language detection, flag lookup, LLM call |
 | Frontend | `frontend/` | React SPA (Vite + `@infra/ui`), served by nginx; speaks HTTP to the backend |
 | Language map | `translator/language_map.json` | ~50 language codes to human-readable names |

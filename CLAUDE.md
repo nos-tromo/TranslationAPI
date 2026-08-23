@@ -92,7 +92,7 @@ a note here.
 translator/                       # the importable package
   main.py        FastAPI app. Instantiates a single Translator at startup.
                  Endpoints under /api/v1: POST /translate, GET /languages,
-                 GET /health.
+                 GET /version, GET /config, GET /whoami, GET /health.
   engine.py      Translator class. Wraps an OpenAI-compatible client to call
                  the configured model for both translation and source-language
                  detection (a small second completions call on a bounded text
