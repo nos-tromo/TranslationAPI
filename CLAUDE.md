@@ -173,4 +173,8 @@ The frontend (`frontend/`, a separate Vite/React project) never imports
   root-anchored locations apply unchanged, and direct root access 302s to
   `/translator/`. The frontend joins the external `edge-net` as
   `translator-frontend` — the edge-plane gateway is the sole production
-  entry point and supplies an `X-Auth-User` header, which this app ignores.
+  entry point and supplies `X-Auth-User` / `X-Auth-Name`. translator has no
+  principal seam (unlike chorus/docint/Nextext): the sole consumer is
+  `GET /api/v1/whoami`, which echoes both headers back for the SPA's
+  AppHeader. It is display-only, never an authorization gate, and stays
+  unauthenticated like `/version` and `/config`.

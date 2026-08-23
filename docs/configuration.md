@@ -74,5 +74,7 @@ Then set `OPENAI_API_BASE=http://ollama:11434/v1` (or
 In production the SPA is served under the canonical `/translator/` sub-path
 behind the `edge-plane` gateway, not at its own vhost root. The frontend joins
 the external `edge-net` network as alias `translator-frontend`; the gateway is
-the sole production entry point and supplies an `X-Auth-User` header, which
-this app ignores. See `edge-plane` for the gateway side.
+the sole production entry point and supplies `X-Auth-User` / `X-Auth-Name`.
+translator enforces nothing on them: `GET /api/v1/whoami` echoes both back so
+the SPA header can show who is signed in, and nothing else reads them. See
+`edge-plane` for the gateway side.
