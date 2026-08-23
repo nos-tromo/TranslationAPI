@@ -27,8 +27,9 @@ runs no models of its own — it is a typed, audited, language-aware wrapper
 around an external inference endpoint.
 
 In the nos-tromo federation it sits next to chorus, docint, and Nextext as a
-fourth app: own repo, own release cycle, joins `inference-net`, no
-`data-net` attachment because it has no persistent state.
+fourth app: own repo, own release cycle, backend on `inference-net` and
+frontend on `edge-net`, no `data-net` attachment because it has no persistent
+state.
 
 ## Commands
 
@@ -52,7 +53,7 @@ cd frontend && pnpm lint && pnpm typecheck && pnpm test && pnpm build
 
 # Docker (preferred — matches production)
 make help                            # list build-host targets
-make network                         # one-time: create the external inference-net
+make network                         # one-time: create the external inference-net + edge-net
 make build                           # build backend + frontend images
 make up                              # start the stack, detached; no build (production shape — base docker/compose.yaml)
 make up-dev                          # like 'up' + host ports; detached, no build (run 'make build' first)
@@ -91,7 +92,7 @@ a note here.
 translator/                       # the importable package
   main.py        FastAPI app. Instantiates a single Translator at startup.
                  Endpoints under /api/v1: POST /translate, GET /languages,
-                 GET /health.
+                 GET /version, GET /config, GET /whoami, GET /health.
   engine.py      Translator class. Wraps an OpenAI-compatible client to call
                  the configured model for both translation and source-language
                  detection (a small second completions call on a bounded text
@@ -116,10 +117,13 @@ The frontend (`frontend/`, a separate Vite/React project) never imports
 
 - `Dockerfile.backend` — multi-stage uv build, runs `uvicorn translator.main:app`.
 - `Dockerfile.frontend` — two-stage build: `node:20-alpine` builds the Vite SPA,
-  `nginx:1.27-alpine` serves the static assets and proxies `/api` to the backend.
-- `compose.yaml` — production shape: services on `translator-net` (internal)
-  + `inference-net` (external, shared); no host ports.
-- `compose.override.yaml` — dev overlay that publishes 8000 (backend) and
+  `nginxinc/nginx-unprivileged:1.27-alpine` serves the static assets as uid 101
+  on :8080 and proxies `/api` to the backend.
+- `compose.yaml` — production shape: both services on `translator-net`
+  (internal); the backend additionally on `inference-net` and the frontend on
+  `edge-net` (both external, shared). No host ports.
+- `compose.override.yaml` — dev overlay that publishes
+  `${TRANSLATOR_BACKEND_HOST_PORT:-8000}` (backend) and
   `${TRANSLATOR_FRONTEND_HOST_PORT:-8501}` (frontend).
 
 ## Environment Variables
@@ -131,8 +135,11 @@ The frontend (`frontend/`, a separate Vite/React project) never imports
 | `OPENAI_TIMEOUT` | No | `60` | Per-request timeout in seconds |
 | `TEXT_MODEL` | Yes | — (compose fallback: `cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit`) | Model identifier passed in every chat completions request (translation + language detection — use an instruction-tuned model). Never hardcoded in Python — the fallback lives only in `docker/compose.yaml` |
 | `DEFAULT_TARGET_LANGUAGE` | No (build) | `English` | Default target language; passed as the `VITE_DEFAULT_TARGET_LANGUAGE` build arg and baked into the SPA at image build |
+| `RESPONSE_LANGUAGE` | No | `en` | SPA interface language, `en` or `de`; UI chrome only — the translation target stays a per-request choice |
 | `TRANSLATOR_FRONTEND_HOST_PORT` | No | `8501` | Dev-only host port; mapped to the frontend container's nginx on :8080 |
-| `INFERENCE_NETWORK` | No | `inference-net` | External Docker network name to join |
+| `TRANSLATOR_BACKEND_HOST_PORT` | No | `8000` | Dev-only host port for the FastAPI backend |
+| `INFERENCE_NETWORK` | No | `inference-net` | External Docker network the backend joins |
+| `EDGE_NET` | No | `edge-net` | External Docker network the frontend joins, where the edge-plane gateway reaches it as `translator-frontend` |
 | `LOG_LEVEL` | No | `INFO` | Minimum log level emitted on stderr |
 | `EXTRA_NO_PROXY` | No | — | Comma-separated hostnames appended to `NO_PROXY`; must start with `,` |
 
@@ -170,4 +177,8 @@ The frontend (`frontend/`, a separate Vite/React project) never imports
   root-anchored locations apply unchanged, and direct root access 302s to
   `/translator/`. The frontend joins the external `edge-net` as
   `translator-frontend` — the edge-plane gateway is the sole production
-  entry point and supplies an `X-Auth-User` header, which this app ignores.
+  entry point and supplies `X-Auth-User` / `X-Auth-Name`. translator has no
+  principal seam (unlike chorus/docint/Nextext): the sole consumer is
+  `GET /api/v1/whoami`, which echoes both headers back for the SPA's
+  AppHeader. It is display-only, never an authorization gate, and stays
+  unauthenticated like `/version` and `/config`.

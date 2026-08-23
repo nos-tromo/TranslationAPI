@@ -30,7 +30,8 @@ translator ships no model weights and runs no local inference. Swapping
 
 | Variable | Required | Default | Purpose |
 |---|---|---|---|
-| `INFERENCE_NETWORK` | No | `inference-net` | Name of the external Docker network to join |
+| `INFERENCE_NETWORK` | No | `inference-net` | Name of the external Docker network the backend joins |
+| `EDGE_NET` | No | `edge-net` | Name of the external Docker network the frontend joins, where the edge-plane gateway reaches it as `translator-frontend` |
 | `TRANSLATOR_FRONTEND_HOST_PORT` | No | `8501` | Dev-only host port for the SPA; mapped to the frontend container's nginx on `:8080` |
 | `TRANSLATOR_BACKEND_HOST_PORT` | No | `8000` | Dev-only host port for the FastAPI backend |
 | `LOG_LEVEL` | No | `INFO` | Minimum log level emitted on stderr |
@@ -73,5 +74,7 @@ Then set `OPENAI_API_BASE=http://ollama:11434/v1` (or
 In production the SPA is served under the canonical `/translator/` sub-path
 behind the `edge-plane` gateway, not at its own vhost root. The frontend joins
 the external `edge-net` network as alias `translator-frontend`; the gateway is
-the sole production entry point and supplies an `X-Auth-User` header, which
-this app ignores. See `edge-plane` for the gateway side.
+the sole production entry point and supplies `X-Auth-User` / `X-Auth-Name`.
+translator enforces nothing on them: `GET /api/v1/whoami` echoes both back so
+the SPA header can show who is signed in, and nothing else reads them. See
+`edge-plane` for the gateway side.

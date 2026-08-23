@@ -13,7 +13,7 @@ reaches inference over the shared `inference-net` network.
 
 | Component | File | Description |
 |---|---|---|
-| Backend | `translator/main.py` | FastAPI app — `POST /translate`, `GET /languages` |
+| Backend | `translator/main.py` | FastAPI app — six routes under `/api/v1`: `POST /translate`, `GET /languages`, `/version`, `/config`, `/whoami`, `/health` |
 | Engine | `translator/engine.py` | `Translator` class — language detection, flag lookup, LLM call |
 | Frontend | `frontend/` | React SPA (Vite + `@infra/ui`), served by nginx; speaks HTTP to the backend |
 | Language map | `translator/language_map.json` | ~50 language codes to human-readable names |
@@ -38,8 +38,9 @@ App: `http://localhost:${TRANSLATOR_FRONTEND_HOST_PORT:-8501}`
 
 `make dev` layers the dev overlay so host ports are published. `make up` runs
 the base compose file alone — the production shape, no host ports. The compose
-file expects an external Docker network named `inference-net` (configurable
-via `INFERENCE_NETWORK`).
+file expects two external Docker networks: `inference-net` (configurable via
+`INFERENCE_NETWORK`), which the backend joins, and `edge-net` (via `EDGE_NET`),
+which the frontend joins. `make network` creates both.
 
 ## Local development
 
