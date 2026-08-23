@@ -30,7 +30,8 @@ translator ships no model weights and runs no local inference. Swapping
 
 | Variable | Required | Default | Purpose |
 |---|---|---|---|
-| `INFERENCE_NETWORK` | No | `inference-net` | Name of the external Docker network to join |
+| `INFERENCE_NETWORK` | No | `inference-net` | Name of the external Docker network the backend joins |
+| `EDGE_NET` | No | `edge-net` | Name of the external Docker network the frontend joins, where the edge-plane gateway reaches it as `translator-frontend` |
 | `TRANSLATOR_FRONTEND_HOST_PORT` | No | `8501` | Dev-only host port for the SPA; mapped to the frontend container's nginx on `:8080` |
 | `TRANSLATOR_BACKEND_HOST_PORT` | No | `8000` | Dev-only host port for the FastAPI backend |
 | `LOG_LEVEL` | No | `INFO` | Minimum log level emitted on stderr |

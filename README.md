@@ -38,8 +38,9 @@ App: `http://localhost:${TRANSLATOR_FRONTEND_HOST_PORT:-8501}`
 
 `make dev` layers the dev overlay so host ports are published. `make up` runs
 the base compose file alone — the production shape, no host ports. The compose
-file expects an external Docker network named `inference-net` (configurable
-via `INFERENCE_NETWORK`).
+file expects two external Docker networks: `inference-net` (configurable via
+`INFERENCE_NETWORK`), which the backend joins, and `edge-net` (via `EDGE_NET`),
+which the frontend joins. `make network` creates both.
 
 ## Local development
 
