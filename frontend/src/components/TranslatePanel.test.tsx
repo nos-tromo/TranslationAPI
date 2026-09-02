@@ -88,7 +88,8 @@ describe('TranslatePanel', () => {
 
     // Wait for languages to load before selecting the override.
     const input = await screen.findByLabelText('Text to translate')
-    await userEvent.selectOptions(screen.getByLabelText('Target language'), 'fr')
+    await userEvent.click(screen.getByRole('combobox', { name: 'Target language' }))
+    await userEvent.click(screen.getByRole('option', { name: 'French' }))
     await userEvent.type(input, 'Hello world')
     await userEvent.click(screen.getByRole('button', { name: 'Translate' }))
 

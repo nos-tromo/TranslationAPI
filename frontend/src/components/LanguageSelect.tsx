@@ -1,4 +1,4 @@
-import { Select } from '@infra/ui'
+import { SelectMenu } from '@infra/ui'
 import { useT } from '../i18n/LanguageContext'
 import type { Language } from '../api/types'
 
@@ -23,17 +23,24 @@ export function LanguageSelect({
   includeAuto = false,
 }: LanguageSelectProps) {
   const t = useT()
+  const options = [
+    ...(includeAuto ? [{ value: AUTO_DETECT, label: t('select.auto_detect') }] : []),
+    ...languages.map((lang) => ({ value: lang.code, label: lang.name })),
+  ]
   return (
-    <label htmlFor={id} className="flex flex-col gap-1 text-sm text-muted-foreground">
-      {label}
-      <Select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
-        {includeAuto && <option value={AUTO_DETECT}>{t('select.auto_detect')}</option>}
-        {languages.map((lang) => (
-          <option key={lang.code} value={lang.code}>
-            {lang.name}
-          </option>
-        ))}
-      </Select>
-    </label>
+    // A <label> can no longer wrap this — the picker is a button, not a form
+    // control — so the caption is a plain span and `label` carries the
+    // accessible name. The trigger shows a language, which is a value and
+    // cannot name the control.
+    <div id={id} className="flex flex-col gap-1 text-sm text-muted-foreground">
+      <span>{label}</span>
+      <SelectMenu
+        variant="field"
+        label={label}
+        options={options}
+        value={value}
+        onChange={onChange}
+      />
+    </div>
   )
 }
