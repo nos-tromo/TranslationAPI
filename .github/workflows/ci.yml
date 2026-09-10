@@ -19,7 +19,7 @@ jobs:
     # frontend eslint.config.js drift-checks; nos-tromo style tuning:
     # line-length=120, ANN401 ignored, local pyrefly hook. Canonical configs at
     # nos-tromo/.github/configs/{python-strict,make-common,frontend-eslint}/.
-    uses: nos-tromo/.github/.github/workflows/python-app-ci.yml@0b022a325f9fc87b6bb3b56eb9b34769d730962f # v3.16
+    uses: nos-tromo/.github/.github/workflows/python-app-ci.yml@a8bf7c5631473424abd07965cf188a78ec5e79b4 # v3.17-rc (soak: hub PR #59, do not merge)
     with:
       python-versions: '["3.11"]'
       uv-sync-args: '--locked --group dev'
